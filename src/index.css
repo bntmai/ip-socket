@@ -1,1 +1,4 @@
-
+.editorClassName{
+    outline: 1px solid #F1F1F1;
+    height: 300px !important;
+}
