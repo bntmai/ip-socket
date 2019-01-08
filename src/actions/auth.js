@@ -1,3 +1,8 @@
+/**
+ * 
+ * this API use to check if a new login user is real or not
+ * 
+ */
 export const loadUser = () => {
     return (dispatch, getState) => {
         dispatch({ type: "USER_LOADING" });
@@ -32,6 +37,11 @@ export const loadUser = () => {
             })
     }
 }
+/**
+ * 
+ * this API use to send login information to backend to authentication
+ * 
+ */
 export const login = (username, password) => {
     return (dispatch, getState) => {
         let headers = { "Content-Type": "application/json" };
@@ -62,6 +72,11 @@ export const login = (username, password) => {
             })
     }
 }
+/**
+ * 
+ * this API use to send register information to backend to add new user
+ * 
+ */
 export const register = (username, password, dob) => {
     return (dispatch, getState) => {
         let headers = { "Content-Type": "application/json" };
