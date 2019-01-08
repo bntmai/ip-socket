@@ -10,13 +10,13 @@ const Register = React.lazy(() => import('./views/SocialWeb/Register/Register'))
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
-  { path: '/', exact: true, name: 'Home', component: DefaultLayout },
-  { path: '/login', exact: true, name: 'Home', component: Login },
-  { path: '/register', exact: true, name: 'Home', component: Register },
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard },
-  { path: '/users', exact: true,  name: 'Users', component: Users },
-  { path: '/profile', exact: true, name: 'User Page', component: UserDetail },
-  { path: '/create-blog', exact: true, name: 'User Page', component: CreateBlog },
+  { path: '/home', exact: true, name: 'Home', component: DefaultLayout },
+  { path: '/home/login', exact: false, name: 'Home', component: Login },
+  { path: '/home/register', exact: true, name: 'Home', component: Register },
+  { path: '/home/dashboard', name: 'Dashboard', component: Dashboard },
+  { path: '/home/users', exact: true,  name: 'Users', component: Users },
+  { path: '/home/profile', exact: false, name: 'User Page', component: UserDetail },
+  { path: '/home/create-blog', exact: true, name: 'User Page', component: CreateBlog },
 ];
 
 export default routes;

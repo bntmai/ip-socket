@@ -1,5 +1,8 @@
 import auth from "./auth";
+import { combineReducers } from 'redux'
 
-const ponyApp = combineReducers({
-    notes, auth,
+const ipApp = combineReducers({
+     auth,
 })
+
+export default ipApp;

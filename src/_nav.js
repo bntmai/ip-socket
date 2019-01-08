@@ -11,22 +11,22 @@ export default {
     },
     {
       name: 'My profile',
-      url: '/profile',
+      url: '/home/profile',
       icon: 'icon-drop',
     },
     {
       name: 'Find friends',
-      url: '/users',
+      url: '/home/users',
       icon: 'icon-drop',
     },
     {
       name: 'Write blog',
-      url: '/create-blog',
+      url: '/home/create-blog',
       icon: 'icon-drop',
     },
     {
       name: 'Chat with friends',
-      url: '/users',
+      url: '/home/users',
       icon: 'icon-drop',
     },
   ],
