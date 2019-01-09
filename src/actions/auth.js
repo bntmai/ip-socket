@@ -1,6 +1,6 @@
 /**
  * 
- * this API use to check if a new login user is real or not
+ * this API use to check if token is valid or not
  * 
  */
 export const loadUser = () => {
@@ -8,9 +8,13 @@ export const loadUser = () => {
         dispatch({ type: "USER_LOADING" });
 
         const token = getState().auth.token;
+        console.log(getState().auth);
 
         let headers = {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json", 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
         };
 
         if (token) {
@@ -44,7 +48,12 @@ export const loadUser = () => {
  */
 export const login = (username, password) => {
     return (dispatch, getState) => {
-        let headers = { "Content-Type": "application/json" };
+        let headers = {            
+            "Content-Type": "application/json", 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        };
         let body = JSON.stringify({ username, password });
 
         return fetch("http://127.0.0.1:5000/api/auth/login/", { headers, body, method: "POST" })
@@ -79,7 +88,12 @@ export const login = (username, password) => {
  */
 export const register = (username, password, dob) => {
     return (dispatch, getState) => {
-        let headers = { "Content-Type": "application/json" };
+        let headers = {             
+            "Content-Type": "application/json", 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        };
         let body = JSON.stringify({ username, password, dob });
 
         return fetch("http://127.0.0.1:5000/api/auth/register/", { headers, body, method: "POST" })
@@ -94,7 +108,7 @@ export const register = (username, password, dob) => {
                 }
             })
             .then(res => {
-                if (res.status === 200) {
+                if (res.status === 201) {
                     dispatch({ type: 'REGISTRATION_SUCCESSFUL', data: res.data });
                     return res.data;
                 } else if (res.status === 403 || res.status === 401) {
