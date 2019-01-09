@@ -12,7 +12,7 @@ export const fetchBlog = () => {
             headers["Authorization"] = `Token ${token}`;
         }
 
-        return fetch("/api/blogs/", { headers, })
+        return fetch("localhost:5000/api/blogs/", { headers, })
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {
@@ -49,7 +49,7 @@ export const addBlog = text => {
         }
 
         let body = JSON.stringify({ text, });
-        return fetch("/api/blogs/", { headers, method: "POST", body })
+        return fetch("localhost:5000/api/blogs/", { headers, method: "POST", body })
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {

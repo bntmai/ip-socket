@@ -16,7 +16,7 @@ export const loadUser = () => {
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
-        return fetch("/api/auth/user/", { headers, })
+        return fetch("http://127.0.0.1:5000/api/auth/user/", { headers, })
             .then(res => {
                 console.log(res);
                 if (res.status < 500) {
@@ -47,7 +47,7 @@ export const login = (username, password) => {
         let headers = { "Content-Type": "application/json" };
         let body = JSON.stringify({ username, password });
 
-        return fetch("/api/auth/login/", { headers, body, method: "POST" })
+        return fetch("http://127.0.0.1:5000/api/auth/login/", { headers, body, method: "POST" })
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {
@@ -82,7 +82,7 @@ export const register = (username, password, dob) => {
         let headers = { "Content-Type": "application/json" };
         let body = JSON.stringify({ username, password, dob });
 
-        return fetch("/api/auth/register/", { headers, body, method: "POST" })
+        return fetch("http://127.0.0.1:5000/api/auth/register/", { headers, body, method: "POST" })
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {
