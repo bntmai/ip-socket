@@ -8,11 +8,12 @@ class Register extends Component {
   state = {
     username: "",
     password: "",
+    dob: "",
   }
 
   onSubmit = e => {
     e.preventDefault();
-    this.props.register(this.state.username, this.state.password);
+    this.props.register(this.state.username, this.state.password, this.state.dob);
   }
 
   render() {

@@ -20,6 +20,7 @@ export const loadUser = () => {
             .then(res => {
                 console.log(res);
                 if (res.status < 500) {
+                    console.log(3);
                     return { status: res.status, data: res };
                 } else {
                     console.log("Server Error!");
@@ -29,9 +30,11 @@ export const loadUser = () => {
             .then(res => {
                 if (res.status === 200) {
                     dispatch({ type: 'USER_LOADED', user: res.data });
+                    console.log(1);
                     return res.data;
                 } else if (res.status >= 400 && res.status < 500) {
                     dispatch({ type: "AUTHENTICATION_ERROR", data: res.data });
+                    console.log(2);
                     throw res.data;
                 }
             })
@@ -45,6 +48,12 @@ export const loadUser = () => {
 export const login = (username, password) => {
     return (dispatch, getState) => {
         let headers = { "Content-Type": "application/json" };
+        const token = getState().auth.token;
+
+        if (token) {
+            headers["Authorization"] = `Token ${token}`;
+        }
+
         let body = JSON.stringify({ username, password });
 
         return fetch("/api/auth/login/", { headers, body, method: "POST" })
@@ -80,6 +89,11 @@ export const login = (username, password) => {
 export const register = (username, password, dob) => {
     return (dispatch, getState) => {
         let headers = { "Content-Type": "application/json" };
+        const token = getState().auth.token;
+
+        if (token) {
+            headers["Authorization"] = `Token ${token}`;
+        }
         let body = JSON.stringify({ username, password, dob });
 
         return fetch("/api/auth/register/", { headers, body, method: "POST" })
