@@ -17,7 +17,7 @@ class Register extends Component {
   }
 
   render() {
-    if (this.props.isAuthenticated) {
+    if (this.props.isRegistered) {
       return <Redirect to="/" />
     }
     return (
@@ -79,7 +79,8 @@ const mapStateToProps = state => {
   }
   return {
     errors,
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    isRegistered: state.auth.isRegistered
   };
 }
 
