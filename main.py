@@ -22,18 +22,19 @@ CORS(app)
 #Uncomment when have db
 @app.route('/api/auth/register/', methods=['POST'])
 def register():
-    # conn = sqlite3.connect('database.db')
-    # cur = conn.cursor()
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
     email = request.get_json()['username']
-    password = bcrypt.generate_password_hash(request.get_json()['password']).decode('utf-8')
+    password = request.get_json()['password']
     dob = request.get_json()['dob']
 
-    # cur.execute("INSERT INTO users (email, password, dob, avatar) VALUES ('" +
-	# 	str(email) + "', '" +
-	# 	str(password) + "', '" +
-	# 	str(dob) + "', '" +
-	# 	str(avatar) + "')")
-    # conn.commit()
+    cur.execute("INSERT INTO user (email, password, dob, avatar) VALUES ('" +
+		str(email) + "', '" +
+		str(password) + "', '" +
+		str(dob) + "', '" +
+		# str(avatar) + "')")
+    "" + "')")
+    conn.commit()
 	
     # result = {
 	# 	'email' : email,
@@ -54,50 +55,48 @@ def register():
 @app.route('/api/auth/login/', methods=['POST'])
 def login():
     conn = sqlite3.connect('database.db')
+    status =""
+    cur = conn.cursor()
+    email = request.get_json()['username']
+    password = request.get_json()['password']
+    result = ""
+    cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
+    rv = cur.fetchone()
+    if rv[2] == password:
+        print "hello"
+        access_token = create_access_token(identity = {'email': rv[1]})
+        result = access_token
+        status = 201
+    else:
+        result = jsonify({"error":"Invalid username and password"})
+        status = 403
+    conn.close()
 
+    return result, status
+
+@app.route('/api/auth/user/', methods=['POST'])
+def user_auth():
+    conn = sqlite3.connect('database.db')
+    status = ""
     cur = conn.cursor()
     email = request.get_json()['username']
     password = request.get_json()['password']
     result = ""
 
-    print email
-
     cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
     rv = cur.fetchone()
-    print rv
 
-    if bcrypt.check_password_hash(rv['password'], password):
-        access_token = create_access_token(identity = {'first_name': rv['first_name'],'last_name': rv['last_name'],'email': rv['email']})
+    if rv[2] == password:
+        access_token = create_access_token(identity={'email': rv[1]})
         result = access_token
+        status = 201
     else:
-        result = jsonify({"error":"Invalid username and password"})
+        result = jsonify({"error": "Invalid username and password"})
+        status = 403
     conn.close()
 
-    return result
+    return result, status
 
-@app.route('/api/auth/user/', methods=['POST'])
-def user_auth():
-    conn = sqlite3.connect('database.db')
 
-    cur = conn.cursor()
-    token = request.get_json()['username']
-    password = request.get_json()['password']
-    result = ""
-
-    print email
-
-    cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
-    rv = cur.fetchone()
-    print rv
-
-    if bcrypt.check_password_hash(rv['password'], password):
-        access_token = create_access_token(identity = {'first_name': rv['first_name'],'last_name': rv['last_name'],'email': rv['email']})
-        result = access_token
-    else:
-        result = jsonify({"error":"Invalid username and password"})
-    conn.close()
-
-    return result
-	
 if __name__ == '__main__':
     app.run(debug=True)

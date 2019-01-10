@@ -1,6 +1,7 @@
 const initialState = {
     access_token: localStorage.getItem("access_token"),
     isAuthenticated: null,
+    isRegistered: null,
     isLoading: false,
     user: null,
     errors: {},
@@ -15,12 +16,12 @@ export default function auth(state = initialState, action) {
             return { ...state, isLoading: true };
 
         case 'USER_LOADED':
-            return { ...state, isAuthenticated: true, isLoading: false, user: action.user };
+            return { ...state, isAuthenticated: true, isRegistered: true, isLoading: false, user: action.user };
 
         case 'LOGIN_SUCCESSFUL':
             localStorage.setItem("access_token", action.data['access_token']);
             console.log('Hi')
-            return { ...state, ...action.data, isAuthenticated: true, isLoading: false, errors: null };
+            return { ...state, ...action.data, isAuthenticated: true, isRegistered: true, isLoading: false, errors: null };
 
         case 'AUTHENTICATION_ERROR':return {...state, ...action.data};
         case 'LOGIN_FAILED':return {...state, ...action.data};
@@ -29,11 +30,11 @@ export default function auth(state = initialState, action) {
             console.log('Hii')
             return {
                 ...state, errors: action.data, access_token: null, user: null,
-                isAuthenticated: false, isLoading: false
+                isAuthenticated: false,isRegistered: true, isLoading: false
             };
         case 'REGISTRATION_SUCCESSFUL':
             localStorage.setItem("access_token", action.data["result"]["access_token"]);
-            return {...state, ...action.data, isAuthenticated: true, isLoading: false, errors: null};
+            return {...state, ...action.data, isAuthenticated: false, isRegistered: true, isLoading: false, errors: null};
         default:
             return state;
     }
