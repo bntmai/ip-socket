@@ -33,10 +33,11 @@ export const fetchUsers = () => {
             })
     }
 }
+
 /**
  * 
  * @param {*} index 
- * return certain user infomation by id include their blogs in ascending order (front end will send a params id to backend)
+ * return current user infomation by id include their blogs in ascending order (front end will send a params id to backend)
  */
 export const fetchUserInfoByUserId = index => {
     return (dispatch, getState) => {
@@ -46,7 +47,7 @@ export const fetchUserInfoByUserId = index => {
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
-        let userId = getState().users[index].id;
+        
         return fetch(`http://127.0.0.1:5000/api/users/${userId}/`, { headers, })
             .then(res => {
                 if (res.status < 500) {

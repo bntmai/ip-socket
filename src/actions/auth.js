@@ -68,7 +68,7 @@ export const login = (username, password) => {
                 }
             })
             .then(res => {
-                if (res.status === 200) {
+                if (res.status === 201) {
                     dispatch({ type: 'LOGIN_SUCCESSFUL', data: res.data });
                     return res.data;
                 } else if (res.status === 403 || res.status === 401) {
