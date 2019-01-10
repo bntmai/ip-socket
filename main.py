@@ -35,8 +35,7 @@ def register():
             str(email) + "', '" +
             str(password) + "', '" +
             str(dob) + "', '" +
-            str(avatar) + "')")
-        "" + "')")
+            "" + "')")
         conn.commit()
         cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
         rv = cur.fetchone()
