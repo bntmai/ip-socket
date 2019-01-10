@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Card, CardBody, CardHeader, Col, Row, Table, FormGroup, Label, Input, Button} from 'reactstrap';
-
+import { users } from "../../actions";
 import usersData from './UsersData'
+import { connect } from "react-redux";
 
 function UserRow(props) {
   const user = props.user
-  const userLink = `/users/${user.id}`
+
+  const userLink = `/home/users/${user.id}`
 
   const getBadge = (status) => {
     return status === 'Active' ? 'success' :
@@ -19,20 +21,53 @@ function UserRow(props) {
   return (
     <tr key={user.id.toString()}>
       <th scope="row"><Link to={userLink}>{user.id}</Link></th>
-      <td><Link to={userLink}>{user.name}</Link></td>
-      <td>{user.registered}</td>
-      <td>{user.role}</td>
+      <td><Link to={userLink}>{user.email}</Link></td>
+      <td>{user.dob}</td>
+      <td>{user.relation}</td>
       <td><Link to={userLink}><Badge color={getBadge(user.status)}>{user.status}</Badge></Link></td>
     </tr>
   )
 }
 
 class Users extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: "",
+    };
+    this.getUserList();
+  }
+  getUserList() {
+    let headers = { "Content-Type": "application/json" };
+    let { token } = localStorage.getItem("access_token");
+
+    if (token) {
+        headers["Authorization"] = `Token ${token}`;
+    }
+    let userId = localStorage.getItem("id");
+    let body = JSON.stringify({"userId":  userId });
+    fetch('http://127.0.0.1:5000/api/users/',{ headers, method: "POST", body }).then(result => {
+        return result.json();
+    }).then( data => {
+      this.setState({
+        data: data,
+      })
+    })
+  }
+  componentDidMount() {
+    this.getUserList();
+  }
 
   render() {
-
-    const userList = usersData.filter((user) => user.id < 10)
-
+    // const userList = usersData.filter((user) => user.id < 10)
+    // var data = JSON.parse(this.state.data.result);
+    const userList = []
+    const data = this.state.data.result;
+    for (var item in data) {
+      console.log(item);
+      userList.push(data[item]);
+    }
+    console.log(userList);
     return (
       <div className="animated fadeIn">
         <Row>
@@ -82,4 +117,10 @@ class Users extends Component {
   }
 }
 
-export default Users;
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchUsers: () => dispatch(users.fetchUsers()),
+  };
+}
+
+export default connect(null,mapDispatchToProps)(Users);

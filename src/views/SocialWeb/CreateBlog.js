@@ -26,11 +26,12 @@ class Forms extends Component {
   state = {
     title: "",
     content: "",
+    userId: "",
   }
 
   onSubmit = e => {
     e.preventDefault();
-    this.props.addBlog(this.state.title, this.state.content);
+    this.props.addBlog(this.state.title, this.state.content, this.state.userId);
   }
 
   constructor(props) {
@@ -48,9 +49,11 @@ class Forms extends Component {
 
   onEditorStateChange: Function = (editorState) => {
     const contentState = editorState.getCurrentContent();
+    const id = localStorage.getItem("id");
     this.setState({
       editorState,
       content: stateToHTML(contentState),
+      userId: id,
     });
   };
 
@@ -126,7 +129,7 @@ class Forms extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addBlog: (title, content) => dispatch(blogs.addBlog(title, content)),
+    addBlog: (title, content, userId) => dispatch(blogs.addBlog(title, content, userId)),
   };
 }
 

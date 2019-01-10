@@ -39,7 +39,7 @@ export const fetchBlogCurrentUser = () => {
  * @param {*} index 
  * insert new blog into database
  */
-export const addBlog = (title, content) => {
+export const addBlog = (title, content, userId) => {
     return (dispatch, getState) => {
         let headers = { "Content-Type": "application/json" };
         let { token } = getState().auth;
@@ -47,9 +47,8 @@ export const addBlog = (title, content) => {
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
-        let body = JSON.stringify({ "title": title, "content": content, "access_token":  token });
-        console.log(body);
-        return fetch("http://127.0.0.1:5000/api/blogs/", { headers, method: "POST", body })
+        let body = JSON.stringify({ "title": title, "content": content, "userId":  userId });
+        return fetch("http://127.0.0.1:5000/api/add-blogs/", { headers, method: "POST", body })
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {

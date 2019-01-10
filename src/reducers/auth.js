@@ -19,7 +19,10 @@ export default function auth(state = initialState, action) {
             return { ...state, isAuthenticated: true, isRegistered: true, isLoading: false, user: action.user };
 
         case 'LOGIN_SUCCESSFUL':
-            localStorage.setItem("access_token", action.data['access_token']);
+            localStorage.setItem("access_token", action.data["result"]['access_token']);
+            localStorage.setItem("id", action.data["result"]['id']);
+            localStorage.setItem("email", action.data["result"]['email']);
+            localStorage.setItem("dob", action.data["result"]['dob']);
             console.log('Hi')
             return { ...state, ...action.data, isAuthenticated: true, isRegistered: true, isLoading: false, errors: null };
 

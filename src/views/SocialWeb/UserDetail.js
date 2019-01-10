@@ -4,19 +4,59 @@ import { Card, CardBody, CardHeader, Col, Row } from 'reactstrap';
 import usersData from './UsersData'
 
 class User extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      info: "",
+      blogs: ""
+    };
+    this.getUserList();
+  }
+  getUserList() {
+    let headers = { "Content-Type": "application/json" };
+    let { token } = localStorage.getItem("access_token");
 
-  // componentDidMount() {
-  //   fetch().then(result => {
-  //   })
-  // }
+    if (token) {
+      headers["Authorization"] = `Token ${token}`;
+    }
+    const userId = this.props.match.params.id;
+    let body = JSON.stringify({ "userId": userId });
+    fetch('http://127.0.0.1:5000/api/other-users/', { headers, method: "POST", body }).then(result => {
+      return result.json();
+    }).then(data => {
+      this.setState({
+        info: data,
+      })
+    })
+    fetch('http://127.0.0.1:5000/api/blogs/', { headers, method: "POST", body }).then(result => {
+      return result.json();
+    }).then(data => {
+      this.setState({
+        blogs: data,
+      })
+    })
+  }
+  componentDidMount() {
+    this.getUserList();
+  }
 
   render() {
 
-    const user = usersData.find( user => user.id.toString() === this.props.match.params.id)
 
-    const userDetails = user ? Object.entries(user) : [['id', (<span><i className="text-muted icon-ban"></i> Not found</span>)]]
+    // const userDetails = user ? Object.entries(user) : [['id', (<span><i className="text-muted icon-ban"></i> Not found</span>)]]
 
-    console.log(userDetails);
+    console.log(this.state.info, this.state.blogs);
+    const info = this.state.info["result"];
+    const blogs = this.state.blogs["result"];
+    const infoList = [];
+    const blogList = [];
+    for (var item in info) {
+      infoList.push(info[item]);
+    }
+    for (var item in blogs) {
+      blogList.push(blogs[item])
+    }
+    console.log(blogList);
 
     return (
       <div className="animated fadeIn">
@@ -34,14 +74,26 @@ class User extends Component {
                   </div>
                   <dl className="row">
                     <dt className="col-sm-3">Email:</dt>
-                    <dd className="col-sm-9">ngocthanhmai@gmail.com</dd>
+                    <dd className="col-sm-9">{infoList[1]}</dd>
                     <dt className="col-sm-3">Birthday</dt>
-                    <dd className="col-sm-9">September 11, 1997</dd>
+                    <dd className="col-sm-9">{infoList[0]}</dd>
                   </dl>
                 </div>
               </CardBody>
             </Card>
           </Col>
+        </Row>
+        <Row>
+        <Col lg={4}>
+          {blogList.map((blog, index) =>
+            <Card key={index}>
+              <CardHeader>{blog.title}</CardHeader>
+              <CardBody>
+                <div dangerouslySetInnerHTML={{ __html: blog.content  }}></div>
+              </CardBody>
+            </Card>
+          )}
+        </Col>
         </Row>
       </div>
     )

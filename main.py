@@ -80,10 +80,11 @@ def login():
         password = rv[2]
         dob = rv[3]
         result = {
-            'id': id
+            'id': id,
             'email' : email,
             'password' : password,
             'dob' : dob,
+            'access_token': access_token,
         }
         jsonify({'result' : result})
         status = 201
@@ -99,14 +100,13 @@ def user_auth():
     print request.get_json()
     return None
 
-@app.route('/api/blogs/', methods=['POST'])
+@app.route('/api/add-blogs/', methods=['POST'])
 def addBlogs():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
-    userid = request.get_json()['userid']
+    userid = request.get_json()['userId']
     title = request.get_json()['title']
-    content = request.get_json()['userid']
-    conn = sqlite3.connect('database.db')
+    content = request.get_json()['content']
     cur.execute("INSERT INTO blog (userId, title, content, createdDate) VALUES ('" +
                 str(userid) + "', '" +
                 str(title) + "', '" +
@@ -114,18 +114,18 @@ def addBlogs():
                 str(datetime.now()) + "')")
     conn.commit()
     result = {
-            'userid': id
+            'userid': id,
             'title' : title,
             'content' : content,
         }
     conn.close()
-    return {},201
+    return jsonify({'result' : {}}),201
 
-@app.route('/api/blogs/', methods=['GET'])
+@app.route('/api/blogs/', methods=['POST'])
 def get_blogs_user_by_id():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
-    userid = request.get_json()['userid']
+    userid = request.get_json()['userId']
     cur.execute("SELECT * FROM blog where userId = '" + str(userid) + "'")
     rv = cur.fetchall()
     blogs = []
@@ -136,16 +136,15 @@ def get_blogs_user_by_id():
             'createdDate': row[4]
         }
         blogs.append(blog)
-    result = {'data': blog}
     
     conn.close()
-    return result,201
+    return jsonify({'result' : blogs}),200
 
-@app.route('/api/users/', methods=['GET'])
+@app.route('/api/users/', methods=['POST'])
 def get_all_users():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
-    userid = request.get_json()['userid']
+    userid = request.get_json()['userId']
     cur.execute("SELECT * FROM user ")
     rv = cur.fetchall()
     users = []
@@ -154,28 +153,28 @@ def get_all_users():
         instance = cur.fetchone()
         is_friend = "FRIEND" if instance else "GUEST"
         user = {
-            'id': row[0]
+            'id': row[0],
             'email' : row[1],
             'dob' : row[3],
             'relation': is_friend
         }
         users.append(user)
-    result = {'data': users}
+    # result = jsonify({'data': users})
     conn.close()
-    return result,201
+    return jsonify({'result' : users}),200
 
-@app.route('/api/users/${userId}/', methods=['GET'])
+@app.route('/api/other-users/', methods=['POST'])
 def get_user_by_id():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
-    userid = request.get_json()['userid']
+    userid = request.get_json()['userId']
     cur.execute("SELECT * FROM user where id = '" + str(userid) + "'")
     rv = cur.fetchone()
     result = {
             'id': rv[0],
             'email' : rv[1],
             'dob' : rv[3],
-        }
+    }
     conn.close()
     return jsonify({'result' : result}),201
 
