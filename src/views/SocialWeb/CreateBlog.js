@@ -13,12 +13,26 @@ import {
   Label,
   Row,
 } from 'reactstrap';
-import { EditorState } from 'draft-js';
+import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import '../../index.css';
+import { blogs, auth } from "../../actions";
+import { connect } from "react-redux";
+import {stateToHTML} from 'draft-js-export-html';
+
 
 class Forms extends Component {
+  state = {
+    title: "",
+    content: "",
+  }
+
+  onSubmit = e => {
+    e.preventDefault();
+    this.props.addBlog(this.state.title, this.state.content);
+  }
+
   constructor(props) {
     super(props);
 
@@ -33,8 +47,10 @@ class Forms extends Component {
   }
 
   onEditorStateChange: Function = (editorState) => {
+    const contentState = editorState.getCurrentContent();
     this.setState({
       editorState,
+      content: stateToHTML(contentState),
     });
   };
 
@@ -43,7 +59,7 @@ class Forms extends Component {
   }
 
   toggleFade() {
-    this.setState((prevState) => { return { fadeIn: !prevState }});
+    this.setState((prevState) => { return { fadeIn: !prevState } });
   }
 
   render() {
@@ -57,7 +73,7 @@ class Forms extends Component {
                 <strong>Create a new blog post</strong>
               </CardHeader>
               <CardBody>
-                <Form action="" method="post" encType="multipart/form-data" className="form-horizontal">
+                <Form action="" method="post" encType="multipart/form-data" className="form-horizontal" onSubmit={this.onSubmit}>
                   <FormGroup row>
                     <Col md="3">
                       <Label>Static</Label>
@@ -71,35 +87,35 @@ class Forms extends Component {
                       <Label htmlFor="text-input">Title</Label>
                     </Col>
                     <Col xs="12" md="9">
-                      <Input type="text" id="text-input" name="text-input" placeholder="Input title of this blog" />
+                      <Input type="text" id="text-input" name="text-input" placeholder="Input title of this blog" onChange={e => this.setState({ title: e.target.value })} />
                       <FormText color="muted">Make it special</FormText>
                     </Col>
                   </FormGroup>
                   <FormGroup row>
                     <Editor
-                    editorState={editorState}
-                    wrapperClassName="wrapperClassName"
-                    editorClassName="editorClassName"
-                    onEditorStateChange={this.onEditorStateChange}
-                    hashtag={{
-                      separator: ' ',
-                      trigger: '#',
-                    }}
-                    toolbar={{
-                      image: {
-                        uploadEnabled: true,
-                        previewImage: true,
-                      }
-                    }}
+                      editorState={editorState}
+                      wrapperClassName="wrapperClassName"
+                      editorClassName="editorClassName"
+                      onEditorStateChange={this.onEditorStateChange}
+                      hashtag={{
+                        separator: ' ',
+                        trigger: '#',
+                      }}
+                      toolbar={{
+                        image: {
+                          uploadEnabled: true,
+                          previewImage: true,
+                        }
+                      }}
                     />
-                    <Input hidden/>
+                    <Input hidden />
                   </FormGroup>
+                  <CardFooter>
+                    <Button type="submit" size="sm" color="primary"><i className="fa fa-dot-circle-o"></i> Submit</Button>
+                    <Button type="reset" size="sm" color="danger"><i className="fa fa-ban"></i> Reset</Button>
+                  </CardFooter>
                 </Form>
               </CardBody>
-              <CardFooter>
-                <Button type="submit" size="sm" color="primary"><i className="fa fa-dot-circle-o"></i> Submit</Button>
-                <Button type="reset" size="sm" color="danger"><i className="fa fa-ban"></i> Reset</Button>
-              </CardFooter>
             </Card>
           </Col>
         </Row>
@@ -108,4 +124,10 @@ class Forms extends Component {
   }
 }
 
-export default Forms;
+const mapDispatchToProps = dispatch => {
+  return {
+    addBlog: (title, content) => dispatch(blogs.addBlog(title, content)),
+  };
+}
+
+export default connect(null,mapDispatchToProps)(Forms);

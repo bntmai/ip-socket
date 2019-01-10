@@ -77,27 +77,11 @@ def login():
 
 @app.route('/api/auth/user/', methods=['POST'])
 def user_auth():
-    conn = sqlite3.connect('database.db')
+    print request.get_json()
+    return null
 
-    cur = conn.cursor()
-    token = request.get_json()['username']
-    password = request.get_json()['password']
-    result = ""
-
-    print email
-
-    cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
-    rv = cur.fetchone()
-    print rv
-
-    if bcrypt.check_password_hash(rv['password'], password):
-        access_token = create_access_token(identity = {'first_name': rv['first_name'],'last_name': rv['last_name'],'email': rv['email']})
-        result = access_token
-    else:
-        result = jsonify({"error":"Invalid username and password"})
-    conn.close()
-
-    return result
-	
+@app.route('/api/blogs/', methods=['POST'])
+def addBlogs():
+    return {},201
 if __name__ == '__main__':
     app.run(debug=True)

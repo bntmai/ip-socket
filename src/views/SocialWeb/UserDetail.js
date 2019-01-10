@@ -5,6 +5,11 @@ import usersData from './UsersData'
 
 class User extends Component {
 
+  // componentDidMount() {
+  //   fetch().then(result => {
+  //   })
+  // }
+
   render() {
 
     const user = usersData.find( user => user.id.toString() === this.props.match.params.id)
@@ -25,7 +30,7 @@ class User extends Component {
               <CardBody>
                 <div className="bd-example">
                   <div className="avatar float-left">
-                    <img className="img-avatar" src="assets/img/avatars/4.jpg" alt="admin@bootstrapmaster.com"></img>
+                    <img className="img-avatar" src="http://127.0.0.1:3000/assets/img/avatars/4.jpg" alt="admin@bootstrapmaster.com"></img>
                   </div>
                   <dl className="row">
                     <dt className="col-sm-3">Email:</dt>
