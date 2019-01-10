@@ -71,6 +71,7 @@ def login():
     result = ""
     cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
     rv = cur.fetchone()
+    print rv
     if rv[2] == password:
         print "hello"
         access_token = create_access_token(identity = {'email': rv[1]})
@@ -91,7 +92,7 @@ def login():
         status = 403
     conn.close()
 
-    return result, status
+    return jsonify({'result' : result}), status
 
 @app.route('/api/auth/user/', methods=['POST'])
 def user_auth():
