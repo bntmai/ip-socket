@@ -12,7 +12,7 @@ export const fetchUsers = () => {
             headers["Authorization"] = `Token ${token}`;
         }
 
-        return fetch("http://127.0.0.1:5000/api/users/", { headers, })
+        return fetch("http://127.0.0.1:5000/api/users/", { headers, method: "GET"})
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {
@@ -47,7 +47,7 @@ export const fetchUserInfoByUserId = index => {
             headers["Authorization"] = `Token ${token}`;
         }
         let userId = getState().users[index].id;
-        return fetch(`http://127.0.0.1:5000/api/users/${userId}/`, { headers, })
+        return fetch(`http://127.0.0.1:5000/api/users/${userId}/`, { headers, method: "GET"})
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {

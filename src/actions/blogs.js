@@ -12,7 +12,7 @@ export const fetchBlogCurrentUser = () => {
             headers["Authorization"] = `Token ${token}`;
         }
         let body = JSON.stringify({ "access_token":  token });
-        return fetch("http://127.0.0.1:5000/api/blogs/", { headers, body })
+        return fetch("http://127.0.0.1:5000/api/blogs/", { headers, method: "GET", body })
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {
