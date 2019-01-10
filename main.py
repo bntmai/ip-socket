@@ -40,11 +40,11 @@ def register():
         cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
         rv = cur.fetchone()
         id = rv[0]
-	else:
-        id = rv[0]
-        email = rv[1]
-        password = rv[2]
-        dob = rv[3]
+    else:
+          id = rv[0]
+          email = rv[1]
+          password = rv[2]
+          dob = rv[3]
     # result = {
 	# 	'email' : email,
 	# 	'password' : password,
@@ -54,7 +54,7 @@ def register():
     # conn.close()
     access_token = create_access_token(identity = {'email': email}).decode('ascii')
     result = {
-        'id': id
+        'id': id,
         'email' : email,
         'password' : password,
         'dob' : dob,
@@ -97,7 +97,7 @@ def login():
 @app.route('/api/auth/user/', methods=['POST'])
 def user_auth():
     print request.get_json()
-    return null
+    return None
 
 @app.route('/api/blogs/', methods=['POST'])
 def addBlogs():
@@ -128,7 +128,7 @@ def get_blogs_user_by_id():
     userid = request.get_json()['userid']
     cur.execute("SELECT * FROM blog where userId = '" + str(userid) + "'")
     rv = cur.fetchall()
-    blogs[]
+    blogs = []
     for row in rv:
         blog = {
             'title' : row[2],
@@ -148,7 +148,7 @@ def get_all_users():
     userid = request.get_json()['userid']
     cur.execute("SELECT * FROM user ")
     rv = cur.fetchall()
-    users[]
+    users = []
     for row in rv:
         cur.execute("SELECT * FROM relationship where (userId1 = '" + str(userid) + "' and userId2 = '" + str(row[0]) + "') or (userId1 = '" + str(row[0]) + "' and userId2 = '" + str(userid) + "')")
         instance = cur.fetchone()
@@ -159,7 +159,7 @@ def get_all_users():
             'dob' : row[3],
             'relation': is_friend
         }
-        users.append(blog)
+        users.append(user)
     result = {'data': users}
     conn.close()
     return result,201
@@ -172,7 +172,7 @@ def get_user_by_id():
     cur.execute("SELECT * FROM user where id = '" + str(userid) + "'")
     rv = cur.fetchone()
     result = {
-            'id': rv[0]
+            'id': rv[0],
             'email' : rv[1],
             'dob' : rv[3],
         }
