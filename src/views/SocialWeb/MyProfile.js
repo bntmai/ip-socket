@@ -1,14 +1,23 @@
 import React, { Component } from 'react';
-import { Card, CardBody, CardHeader, Col, Row } from 'reactstrap';
-
+import { Card, CardBody, CardHeader, Col, Row, FormGroup, Input, Label } from 'reactstrap';
+import ImageUploader from 'react-images-upload';
+import axios from 'axios'
 
 class Profile extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            blogs: ""
+            blogs: "",
+            pictures: [],
+            avatar: "http://127.0.0.1:3000/assets/img/avatars/4.jpg",
         };
         this.getBlogs();
+        this.onDrop = this.onDrop.bind(this);
+    }
+    onDrop(pictureFiles, pictureDataURLs) {
+        this.setState({
+            pictures: this.state.pictures.concat(pictureFiles),
+        });
     }
     getBlogs() {
         let headers = { "Content-Type": "application/json" };
@@ -27,8 +36,56 @@ class Profile extends Component {
             })
         })
     }
+    getAvatar() {
+        let headers = { "Content-Type": "application/json" };
+        let { token } = localStorage.getItem("access_token");
+
+        if (token) {
+            headers["Authorization"] = `Token ${token}`;
+        }
+        const userId = localStorage.getItem("id");
+        let body = JSON.stringify({ "userId": userId });
+        fetch('http://127.0.0.1:5000/api/get-images/', { headers, method: "POST", body }).then(result => {
+            return result.json();
+        }).then(data => {
+            console.log(data.result.avatar);
+            this.setState({
+                avatar: "http://127.0.0.1:3000/assets/" + data.result.avatar,
+            })
+        })
+    }
+    handleUpload = () => {
+        const file = this.state.pictures;
+        const name = localStorage.getItem("email") + "avatar";
+        const data = new FormData();
+        data.append('file', file[0]);
+        data.append('filename', name);
+        data.append('userId', localStorage.getItem("id"));
+        console.log('file', data);
+        let headers = { "Content-Type": "application/json" };
+        let { token } = localStorage.getItem("access_token");
+
+        if (token) {
+            headers["Authorization"] = `Token ${token}`;
+        }
+
+        for (var key of data.entries()) {
+            console.log(key[0] + ', ' + key[1]);
+        }
+
+        fetch('http://127.0.0.1:5000/api/save-images/', {
+            method: 'POST',
+            body: data,
+          }).then((response) => {
+            response.json().then((body) => {
+              this.setState({ imageURL: `http://localhost:8000/${body.file}` });
+            });
+          });
+        }
+    
     componentDidMount() {
         this.getBlogs();
+        this.getAvatar();
     }
 
     render() {
@@ -39,7 +96,7 @@ class Profile extends Component {
         const blogList = [];
         const blogs = this.state.blogs["result"];
         for (var item in blogs) {
-          blogList.push(blogs[item])
+            blogList.push(blogs[item])
         }
 
         return (
@@ -54,7 +111,7 @@ class Profile extends Component {
                             <CardBody>
                                 <div className="bd-example">
                                     <div className="avatar float-left">
-                                        <img className="img-avatar" src="http://127.0.0.1:3000/assets/img/avatars/4.jpg" alt="admin@bootstrapmaster.com"></img>
+                                        <img className="img-avatar" src={this.state.avatar} alt="admin@bootstrapmaster.com"></img>
                                     </div>
                                     <dl className="row">
                                         <dt className="col-sm-3">Email:</dt>
@@ -63,6 +120,15 @@ class Profile extends Component {
                                         <dd className="col-sm-9">{dob}</dd>
                                     </dl>
                                 </div>
+                                <ImageUploader
+                                    withIcon={true}
+                                    buttonText='Choose images'
+                                    onChange={this.onDrop}
+                                    imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                                    maxFileSize={5242880}
+                                    withPreview={true}
+                                />
+                                <button onClick={this.handleUpload}>Upload</button>
                             </CardBody>
                         </Card>
                     </Col>

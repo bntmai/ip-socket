@@ -8,7 +8,8 @@ class User extends Component {
     super(props);
     this.state = {
       info: "",
-      blogs: ""
+      blogs: "",
+      avatar: "http://127.0.0.1:3000/assets/img/avatars/4.jpg"
     };
     this.getUserList();
   }
@@ -36,8 +37,27 @@ class User extends Component {
       })
     })
   }
+  getAvatar() {
+    let headers = { "Content-Type": "application/json" };
+    let { token } = localStorage.getItem("access_token");
+
+    if (token) {
+        headers["Authorization"] = `Token ${token}`;
+    }
+    const userId = localStorage.getItem("id");
+    let body = JSON.stringify({ "userId": userId });
+    fetch('http://127.0.0.1:5000/api/get-images/', { headers, method: "POST", body }).then(result => {
+        return result.json();
+    }).then(data => {
+        console.log(data.result.avatar);
+        this.setState({
+            avatar: "http://127.0.0.1:3000/assets/" + data.result.avatar,
+        })
+    })
+}
   componentDidMount() {
     this.getUserList();
+    this.getAvatar();
   }
 
   render() {
@@ -70,7 +90,7 @@ class User extends Component {
               <CardBody>
                 <div className="bd-example">
                   <div className="avatar float-left">
-                    <img className="img-avatar" src="http://127.0.0.1:3000/assets/img/avatars/4.jpg" alt="admin@bootstrapmaster.com"></img>
+                    <img className="img-avatar" src={this.state.avatar} alt="admin@bootstrapmaster.com"></img>
                   </div>
                   <dl className="row">
                     <dt className="col-sm-3">Email:</dt>
