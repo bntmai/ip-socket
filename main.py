@@ -177,7 +177,7 @@ def get_user_by_id():
     conn.close()
     return jsonify({'result' : result}),201
 
-@app.route('/api/chat/sendMessage', methods=['POST'])
+@app.route('/api/chat/sendMessages', methods=['POST'])
 def send_message():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()

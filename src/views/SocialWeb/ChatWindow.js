@@ -94,10 +94,25 @@ class SendMessageForm extends Component {
         e.preventDefault()
         let currentEmail = localStorage.getItem("email")
         let chatEmail = localStorage.getItem("chatEmail")
-        this.props.sendMessage(currentEmail, chatEmail, this.state.message)
-        this.setState({
-            message: ''
+        let headers = { "Content-Type": "application/json" };
+        let { token } = localStorage.getItem("access_token");
+
+        if (token) {
+            headers["Authorization"] = `Token ${token}`;
+        }
+        const userId = localStorage.getItem("id");
+        let body = JSON.stringify({ "fromUserId": currentEmail, "toUserId": chatEmail, "content":  this.state.message });
+        fetch('http://127.0.0.1:5000/api/chat/sendMessages', { headers, method: "POST", body }).then(result => {
+            return result.json();
+        }).then(data => {
+            this.setState({
+                blogs: data,
+            })
         })
+        // this.props.sendMessage(currentEmail, chatEmail, this.state.message)
+        // this.setState({
+        //     message: ''
+        // })
     }
 
     render() {
@@ -114,10 +129,11 @@ class SendMessageForm extends Component {
         )
     }
 }
-const mapDispatchToProps = dispatch => {
-    return {
-      sendMessage: (fromUserId, toUserId, content) => dispatch(chat.sendMessage(fromUserId, toUserId, content)),
-    };
-  }
+// const mapDispatchToProps = dispatch => {
+//     return {
+//       sendMessage: (fromUserId, toUserId, content) => dispatch(chat.sendMessage(fromUserId, toUserId, content)),
+//     };
+//   }
 
-  export default connect(null,mapDispatchToProps)(ChatApp);
+// connect(null,mapDispatchToProps)(SendMessageForm);
+export default ChatApp;  
