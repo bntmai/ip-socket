@@ -14,7 +14,7 @@ class Login extends Component {
     console.log(this.props.isAuthenticated)
 
     if (this.props.isAuthenticated) {
-      return <Redirect to="/" />
+      return <Redirect to="/home/my-profile" />
     }
     return (
       <div className="app flex-row align-items-center">
