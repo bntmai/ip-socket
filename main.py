@@ -229,23 +229,48 @@ def get_user_by_id():
     conn.close()
     return jsonify({'result' : result}),201
 
-<<<<<<< HEAD
+@app.route('/api/other-users/', methods=['POST'])
+def get_user_by_username():
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    username = request.get_json()['username']
+    cur.execute("SELECT * FROM user where email LIKE '%" + str(username) + "%'")
+    rv = cur.fetchone()
+    if not rv:
+      result = {
+              'id': rv[0],
+              'email' : rv[1],
+              'dob' : rv[3],
+      }
+    else:
+      result = {
+        'error': 'no user with this name'
+      }
+    conn.close()
+    return jsonify({'result' : result}),201
+
 @app.route('/api/add-friends/', methods=['POST'])
 def add_friends():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
+    result = ""
     userid = request.get_json()['userId']
-    cur.execute("SELECT * FROM user where id = '" + str(userid) + "'")
+    friend_id = request.get_json()['user.id']
+    cur.execute("SELECT * FROM relationship where (userId1 = '" + str(userid) + "' and userId2 = '" + str(friend_id) + "') or (userId1 = '" + str(friend_id) + "' and userId2 = '" + str(userid) + "')")
     rv = cur.fetchone()
+    if not rv:
+      cur.execute("INSERT INTO relationship (userId1, userId2) VALUES ('" +
+                  str(userid) + "', '" +
+                  str(friend_id) + "')")
+      conn.commit()
     result = {
-            'id': rv[0],
-            'email' : rv[1],
-            'dob' : rv[3],
+      'userId': userid,
+      'friend_id': friend_id
     }
-    conn.close()
-    return jsonify({}),201
-=======
 
->>>>>>> 858f5feefbaaed5659639ba3872d12bd630acbbc
+    conn.close()
+    return jsonify({'result': result}),201
+
+
 if __name__ == '__main__':
     app.run(debug=True)
