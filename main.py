@@ -125,7 +125,7 @@ def file_uploads():
     userId = secure_filename(request.form["userId"])
     destination="/".join([target, filename])
     file.save(destination)
-    cur.execute("UPDATE user + SET avatar ='" + str(filename) + "' WHERE id = '" + str(userId) + "'")
+    cur.execute("UPDATE user SET avatar = '" + str(filename) + "' WHERE id = '" + str(userId) + "'")
     conn.commit()
     result = {
       'userId': userId,
@@ -139,13 +139,11 @@ def file_uploads():
 def get_avatar():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
-    userId = secure_filename(request.form["userId"])
+    userId = request.get_json()['userId']
     cur.execute("Select avatar from user WHERE id = '" + str(userId) + "'")
     rv = cur.fetchone()
     result = {
-      'userId': rv[0],
-      'email': rv[1],
-      'avatar': rv[4]
+      'avatar': rv[0]
     }
     conn.close()
     return jsonify({'result': result}), 200
@@ -214,19 +212,19 @@ def get_all_users():
     conn.close()
     return jsonify({'result' : users}),200
 
-@app.route('/api/other-users/', methods=['POST'])
-def get_user_by_id():
-    conn = sqlite3.connect('database.db')
-    cur = conn.cursor()
-    userid = request.get_json()['userId']
-    cur.execute("SELECT * FROM user where id = '" + str(userid) + "'")
-    rv = cur.fetchone()
-    result = {
-            'id': rv[0],
-            'email' : rv[1],
-            'dob' : rv[3],
-    }
-    conn.close()
+# @app.route('/api/other-users/', methods=['POST'])
+# def get_user_by_id():
+#     conn = sqlite3.connect('database.db')
+#     cur = conn.cursor()
+#     userid = request.get_json()['userId']
+#     cur.execute("SELECT * FROM user where id = '" + str(userid) + "'")
+#     rv = cur.fetchone()
+#     result = {
+#             'id': rv[0],
+#             'email' : rv[1],
+#             'dob' : rv[3],
+#     }
+#     conn.close()
     return jsonify({'result' : result}),201
 
 @app.route('/api/other-users/', methods=['POST'])
@@ -260,7 +258,7 @@ def add_friends():
     cur = conn.cursor()
     result = ""
     userid = request.get_json()['userId']
-    friend_id = request.get_json()['user.id']
+    friend_id = request.get_json()['friendId']
     cur.execute("SELECT * FROM relationship where (userId1 = '" + str(userid) + "' and userId2 = '" + str(friend_id) + "') or (userId1 = '" + str(friend_id) + "' and userId2 = '" + str(userid) + "')")
     rv = cur.fetchone()
     if not rv:
