@@ -1,38 +1,39 @@
 import React, { Component } from 'react';
-import { Badge, Table } from 'reactstrap';
+import { Badge, Table, Row } from 'reactstrap';
+import { chat } from "../../actions";
 import { Link } from 'react-router-dom';
 import Users from './Users'
-
+import { connect } from "react-redux";
 function UserRow(props) {
     const user = props.user
-
-    const getBadge = (status) => {
-        return status === 'Active' ? 'success' :
-            status === 'Inactive' ? 'secondary' :
-                status === 'Pending' ? 'warning' :
-                    status === 'Banned' ? 'danger' :
-                        'primary'
-    }
-
     return (
-        <tr key={user.id.toString()}>
-            <th scope="row">{user.id}</th>
-            <td>{user.name}</td>
-            <td>><Badge color={getBadge(user.status)}>{user.status}</Badge></td>
-        </tr>
+      <tr key={user.id.toString()}>
+        <td onClick={(event) => {localStorage.setItem("chatEmail", event.currentTarget.innerHTML)}}>{user.email}</td>
+      </tr>
     )
-}
+  }
 class ChatApp extends Component {
 
     constructor() {
+
         super()
         this.state = {
-            messages: []
+            messages: [{
+                fromUserId: "perborgen",
+                content: "who'll win?"
+            },
+            {
+                fromUserId: "janedoe",
+                content: "who'll win?"
+            }]
         }
     }
     
     render() {
-        const userNameList = localStorage.getItem("userNameList")
+        let userList = localStorage.getItem("userList")
+        userList = JSON.parse(userList)
+        console.log(userList)
+
         return (
             <div className="app">
                 <div>
@@ -40,11 +41,11 @@ class ChatApp extends Component {
                     <SendMessageForm />
                 </div>
                 <Table responsive hover>
-                    <tbody>
-                        {userNameList.map((user, index) =>
-                            <UserRow key={index} user={user} />
-                        )}
-                    </tbody>
+                  <tbody>
+                    {userList.map((user, index) =>
+                      <UserRow key={index} user={user}/>
+                    )}
+                  </tbody>
                 </Table>
             </div>
         )
@@ -91,7 +92,9 @@ class SendMessageForm extends Component {
 
     handleSubmit(e) {
         e.preventDefault()
-        this.props.sendMessage(window.localStorage.getItem("email"), window.localStorge.getItem("chatEmail"), this.state.message)
+        let currentEmail = localStorage.getItem("email")
+        let chatEmail = localStorage.getItem("chatEmail")
+        this.props.sendMessage(currentEmail, chatEmail, this.state.message)
         this.setState({
             message: ''
         })
@@ -111,5 +114,10 @@ class SendMessageForm extends Component {
         )
     }
 }
+const mapDispatchToProps = dispatch => {
+    return {
+      sendMessage: (fromUserId, toUserId, content) => dispatch(chat.sendMessage(fromUserId, toUserId, content)),
+    };
+  }
 
-export default ChatApp;
+  export default connect(null,mapDispatchToProps)(ChatApp);
