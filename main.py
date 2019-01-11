@@ -233,21 +233,26 @@ def get_user_by_id():
 def get_user_by_username():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
+    userid = request.get_json()['userId']
     username = request.get_json()['username']
     cur.execute("SELECT * FROM user where email LIKE '%" + str(username) + "%'")
-    rv = cur.fetchone()
-    if not rv:
-      result = {
-              'id': rv[0],
-              'email' : rv[1],
-              'dob' : rv[3],
-      }
-    else:
-      result = {
-        'error': 'no user with this name'
-      }
+    rv = cur.fetchall()
+    users = []
+    if rv:
+      for row in rv:
+        cur.execute("SELECT * FROM relationship where (userId1 = '" + str(userid) + "' and userId2 = '" + str(
+          row[0]) + "') or (userId1 = '" + str(row[0]) + "' and userId2 = '" + str(userid) + "')")
+        instance = cur.fetchone()
+        is_friend = "FRIEND" if instance else "GUEST"
+        user = {
+          'id': row[0],
+          'email': row[1],
+          'dob': row[3],
+          'relation': is_friend
+        }
+        users.append(user)
     conn.close()
-    return jsonify({'result' : result}),201
+    return jsonify({'result' : users}),201
 
 @app.route('/api/add-friends/', methods=['POST'])
 def add_friends():
