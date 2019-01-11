@@ -277,15 +277,20 @@ def find_friends():
   cur = conn.cursor()
   result = []
   search_string = request.get_json()['searchString']
-
+  userid = request.get_json()['userId']
   cur.execute("SELECT * FROM user where email LIKE '%" + search_string +"%'" )
   rv = cur.fetchall()
   for row in rv:
+    cur.execute("SELECT * FROM relationship where (userId1 = '" + str(userid) + "' and userId2 = '" + str(row[0]) + "') or (userId1 = '" + str(row[0]) + "' and userId2 = '" + str(userid) + "')")
+    instance = cur.fetchone()
+    is_friend = "FRIEND" if instance else "GUEST"
     result.append({
-            'id': rv[0],
-            'email' : rv[1],
-            'dob' : rv[3],
+            'id': row[0],
+            'email' : row[1],
+            'dob' : row[3],
+            'relation': is_friend
     })
+    print row
   conn.close()
   return jsonify({'result': result}), 201
 
