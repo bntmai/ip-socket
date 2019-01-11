@@ -198,7 +198,7 @@ def send_message():
             'content' : content,
         }
     conn.close()
-    return {},201
+    return jsonify({}),201
 
 @app.route('/api/chat/loadMessages/', methods=['POST'])
 def load_message():
