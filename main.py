@@ -4,7 +4,17 @@ from datetime import datetime
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+import os
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
+from werkzeug.utils import secure_filename
+
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger('HELLO WORLD')
+
+UPLOAD_FOLDER = './public/assets/'
 
 app = Flask(__name__)
 
@@ -12,6 +22,7 @@ app = Flask(__name__)
 # app.config['MYSQL_PASSWORD'] = ''
 # app.config['MYSQL_DB'] = 'nodejs_login1'
 # app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['JWT_SECRET_KEY'] = 'secret'
 #
 # mysql = MySQL(app)
@@ -99,6 +110,21 @@ def login():
 def user_auth():
     print request.get_json()
     return None
+@app.route('/api/save-images/', methods=['POST'])
+def file_uploads():
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    target=os.path.join(UPLOAD_FOLDER)
+    if not os.path.isdir(target):
+        os.mkdir(target)
+    file = request.files['file'] 
+    filename = secure_filename(request.form["filename"])
+    userId = secure_filename(request.form["userId"])
+    destination="/".join([target, filename])
+    file.save(destination)
+    cur.execute("UPDATE user + SET avatar =" + str(filename) + "WHERE id = " + str(userId))
+    conn.close()
+    return jsonify({'result' : {}}),200
 
 @app.route('/api/add-blogs/', methods=['POST'])
 def addBlogs():
