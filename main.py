@@ -106,10 +106,13 @@ def login():
 
     return jsonify({'result' : result}), status
 
+
 @app.route('/api/auth/user/', methods=['POST'])
 def user_auth():
     print request.get_json()
     return None
+
+
 @app.route('/api/save-images/', methods=['POST'])
 def file_uploads():
     conn = sqlite3.connect('database.db')
@@ -122,9 +125,31 @@ def file_uploads():
     userId = secure_filename(request.form["userId"])
     destination="/".join([target, filename])
     file.save(destination)
-    cur.execute("UPDATE user + SET avatar =" + str(filename) + "WHERE id = " + str(userId))
+    cur.execute("UPDATE user + SET avatar ='" + str(filename) + "' WHERE id = '" + str(userId) + "'")
+    conn.commit()
+    result = {
+      'userId': userId,
+      'avatar': filename
+    }
     conn.close()
-    return jsonify({'result' : {}}),200
+    return jsonify({'result': result}), 200
+
+
+@app.route('/api/get-images/', methods=['POST'])
+def get_avatar():
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    userId = secure_filename(request.form["userId"])
+    cur.execute("Select avatar from user WHERE id = '" + str(userId) + "'")
+    rv = cur.fetchone()
+    result = {
+      'userId': rv[0],
+      'email': rv[1],
+      'avatar': rv[4]
+    }
+    conn.close()
+    return jsonify({'result': result}), 200
+
 
 @app.route('/api/add-blogs/', methods=['POST'])
 def addBlogs():
@@ -145,7 +170,7 @@ def addBlogs():
             'content' : content,
         }
     conn.close()
-    return jsonify({'result' : {}}),201
+    return jsonify({'result' : {result}}),201
 
 @app.route('/api/blogs/', methods=['POST'])
 def get_blogs_user_by_id():
@@ -204,6 +229,7 @@ def get_user_by_id():
     conn.close()
     return jsonify({'result' : result}),201
 
+<<<<<<< HEAD
 @app.route('/api/add-friends/', methods=['POST'])
 def add_friends():
     conn = sqlite3.connect('database.db')
@@ -218,5 +244,8 @@ def add_friends():
     }
     conn.close()
     return jsonify({}),201
+=======
+
+>>>>>>> 858f5feefbaaed5659639ba3872d12bd630acbbc
 if __name__ == '__main__':
     app.run(debug=True)
