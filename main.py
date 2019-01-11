@@ -177,6 +177,7 @@ def get_user_by_id():
     conn.close()
     return jsonify({'result' : result}),201
 
+
 @app.route('/api/chat/sendMessages', methods=['POST'])
 def send_message():
     conn = sqlite3.connect('database.db')
@@ -198,7 +199,10 @@ def send_message():
             'content' : content,
         }
     conn.close()
-    return jsonify({}),201
+    print(result)
+    print("hfksjfhlkasjflasj")
+    return jsonify({}), 201
+
 
 @app.route('/api/chat/loadMessages/', methods=['POST'])
 def load_message():
@@ -206,22 +210,23 @@ def load_message():
     cur = conn.cursor()
     fromUserId = request.get_json()['fromUserId']
     toUserId = request.get_json()['toUserId']
-    content = request.get_json()['content']
-
+    print(fromUserId)
     cur.execute("SELECT * FROM conversation where (fromUserId = '" + str(fromUserId) + "' and toUserId = '" + str(toUserId) +
-    "') or (fromUserId = '" + str(toUserId) + "' and toUserId = '" + str(fromUserId) + "'")
+    "') or (fromUserId = '" + str(toUserId) + "' and toUserId = '" + str(fromUserId) + "' ORDER BY createdTime ASC")
     rv = cur.fetchall()
     result = []
     for mess in rv:
-        result.push({
+        result.append({
             'fromUserId': mess[1],
-            'toUserId' : mess[2],
-            'content' : mess[3],
+            'toUserId': mess[2],
+            'content': mess[3],
         })
+        print(result)
     conn.close()
-    return jsonify({'result' : result}),201
+    return jsonify({'result': result}), 200
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-    socketio.run(app,debug=True)
+    socketio.run(app, debug=True)
+
