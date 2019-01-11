@@ -204,5 +204,19 @@ def get_user_by_id():
     conn.close()
     return jsonify({'result' : result}),201
 
+@app.route('/api/add-friends/', methods=['POST'])
+def add_friends():
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    userid = request.get_json()['userId']
+    cur.execute("SELECT * FROM user where id = '" + str(userid) + "'")
+    rv = cur.fetchone()
+    result = {
+            'id': rv[0],
+            'email' : rv[1],
+            'dob' : rv[3],
+    }
+    conn.close()
+    return jsonify({}),201
 if __name__ == '__main__':
     app.run(debug=True)

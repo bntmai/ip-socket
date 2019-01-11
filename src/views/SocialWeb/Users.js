@@ -5,6 +5,38 @@ import { users } from "../../actions";
 import usersData from './UsersData'
 import { connect } from "react-redux";
 
+function onSubmitFriendRequest (user) {
+  let headers = { "Content-Type": "application/json" };
+  let { token } = localStorage.getItem("access_token");
+
+  if (token) {
+      headers["Authorization"] = `Token ${token}`;
+  }
+  let userId = localStorage.getItem("id");
+  let body = JSON.stringify({"userId":  userId, "friendId": user.id });
+  console.log(body);
+  fetch('http://127.0.0.1:5000/api/add-friends/',{ headers, method: "POST", body }).then(result => {
+      return result.json();
+  }).then( data => {
+    // window.location.reload();
+  })  
+}
+
+function RequestButton(props) {
+  const user = props.user
+  const userLink = `/add-friends/${user.id}`
+  if ( user.relation == 'GUEST' ) {
+    return (
+      <div><Button block color="primary" onClick={() => onSubmitFriendRequest(user)}>Add Friend</Button></div>
+    )
+  }
+  else {
+    return (
+      <div></div>
+    )
+  }
+}
+
 function UserRow(props) {
   const user = props.user
 
@@ -24,7 +56,7 @@ function UserRow(props) {
       <td><Link to={userLink}>{user.email}</Link></td>
       <td>{user.dob}</td>
       <td>{user.relation}</td>
-      <td><Link to={userLink}><Badge color={getBadge(user.status)}>{user.status}</Badge></Link></td>
+      <td><RequestButton user={user}></RequestButton></td>
     </tr>
   )
 }
