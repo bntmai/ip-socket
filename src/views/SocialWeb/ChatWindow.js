@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
-import { Badge, Table, Row } from 'reactstrap';
+import { Badge, Table, Row, Label, Button } from 'reactstrap';
 import { chat } from "../../actions";
 import { Link } from 'react-router-dom';
 import Users from './Users'
 import { connect } from "react-redux";
-function UserRow(props) {
-    const user = props.user
-    return (
-      <tr key={user.id.toString()}>
-        <td onClick={(event) => {localStorage.setItem("chatEmail", event.currentTarget.innerHTML)}}>{user.email}</td>
-      </tr>
-    )
-  }
+
 class ChatApp extends Component {
 
     constructor() {
@@ -25,10 +18,13 @@ class ChatApp extends Component {
             {
                 fromUserId: "janedoe",
                 content: "who'll win?"
-            }]
+            }],
+            chatEmail: localStorage.getItem('chatEmail')
         }
     }
-    
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.state.chatEmail != nextState.chatEmail;
+      }
     render() {
         let userList = localStorage.getItem("userList")
         userList = JSON.parse(userList)
@@ -37,23 +33,23 @@ class ChatApp extends Component {
         return (
             <div className="app">
                 <div>
+
+                <div className="center-label"><Label>{this.state.chatEmail}</Label></div>
                     <MessageList messages={this.state.messages} />
                     <SendMessageForm />
                 </div>
-                <Table responsive hover>
-                  <tbody>
-                    {userList.map((user, index) =>
-                      <UserRow key={index} user={user}/>
+                <ul>
+                    {userList.map((user) =>
+                      <Button block color="light" className="btn-square">{user.email}</Button> 
                     )}
-                  </tbody>
-                </Table>
+                  </ul>
             </div>
         )
     }
 }
 
 class MessageList extends Component {
-    render() {
+    render() {  
         return (
             <ul className="message-list">
                 {this.props.messages.map(message => {
@@ -106,13 +102,9 @@ class SendMessageForm extends Component {
             return result.json();
         }).then(data => {
             this.setState({
-                blogs: data,
+                message: ''
             })
         })
-        // this.props.sendMessage(currentEmail, chatEmail, this.state.message)
-        // this.setState({
-        //     message: ''
-        // })
     }
 
     render() {

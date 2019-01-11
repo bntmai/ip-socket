@@ -91,3 +91,9 @@ html, body {
 .send-message-form input::placeholder {
     color: black;
 }
+
+.center-label{
+    flex: 1;
+    justify-content: flex-start;
+    align-items: 'center'
+}

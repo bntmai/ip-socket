@@ -186,7 +186,7 @@ def send_message():
     toUserId = request.get_json()['toUserId']
     content = request.get_json()['content']
     conn = sqlite3.connect('database.db')
-    cur.execute("INSERT INTO conversation (fromUserId, toUserId, content, createdDate) VALUES ('" +
+    cur.execute("INSERT INTO conversation (fromUserId, toUserId, content, createdTime) VALUES ('" +
                 str(fromUserId) + "', '" +
                 str(toUserId) + "', '" +
                 str(content) + "', '" +
