@@ -5,6 +5,7 @@ import { users } from "../../actions";
 import usersData from './UsersData'
 import { connect } from "react-redux";
 
+
 function UserRow(props) {
   const user = props.user
 
@@ -62,12 +63,14 @@ class Users extends Component {
     // const userList = usersData.filter((user) => user.id < 10)
     // var data = JSON.parse(this.state.data.result);
     const userList = []
+    const userNameList = []
     const data = this.state.data.result;
     for (var item in data) {
       console.log(item);
       userList.push(data[item]);
+      userNameList.push(data[item].email)
     }
-    console.log(userList);
+    localStorage.setItem("userNameList", userNameList);
     return (
       <div className="animated fadeIn">
         <Row>

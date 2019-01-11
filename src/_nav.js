@@ -26,7 +26,7 @@ export default {
     },
     {
       name: 'Chat with friends',
-      url: '/home/chat',
+      url: '/home/ChatWindow',
       icon: 'icon-drop',
     },
   ],

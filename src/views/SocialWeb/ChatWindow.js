@@ -1,29 +1,51 @@
 import React, { Component } from 'react';
+import { Badge, Table } from 'reactstrap';
+import { Link } from 'react-router-dom';
+import Users from './Users'
 
-const DUMMY_DATA = [
-    {
-        senderId: "perborgen",
-        text: "who'll win?"
-    },
-    {
-        senderId: "janedoe",
-        text: "who'll win?"
+function UserRow(props) {
+    const user = props.user
+
+    const getBadge = (status) => {
+        return status === 'Active' ? 'success' :
+            status === 'Inactive' ? 'secondary' :
+                status === 'Pending' ? 'warning' :
+                    status === 'Banned' ? 'danger' :
+                        'primary'
     }
-]
+
+    return (
+        <tr key={user.id.toString()}>
+            <th scope="row">{user.id}</th>
+            <td>{user.name}</td>
+            <td>><Badge color={getBadge(user.status)}>{user.status}</Badge></td>
+        </tr>
+    )
+}
 class ChatApp extends Component {
 
     constructor() {
         super()
         this.state = {
-            messages: DUMMY_DATA
+            messages: []
         }
     }
-
+    
     render() {
+        const userNameList = localStorage.getItem("userNameList")
         return (
             <div className="app">
-                <MessageList messages={this.state.messages} />
-                <SendMessageForm />
+                <div>
+                    <MessageList messages={this.state.messages} />
+                    <SendMessageForm />
+                </div>
+                <Table responsive hover>
+                    <tbody>
+                        {userNameList.map((user, index) =>
+                            <UserRow key={index} user={user} />
+                        )}
+                    </tbody>
+                </Table>
             </div>
         )
     }
@@ -37,10 +59,10 @@ class MessageList extends Component {
                     return (
                         <li key={message.id} className="message">
                             <div>
-                                {message.senderId}
+                                {message.fromUserId}
                             </div>
                             <div>
-                                {message.text}
+                                {message.content}
                             </div>
                         </li>
                     )
@@ -60,21 +82,21 @@ class SendMessageForm extends Component {
         this.handleChange = this.handleChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
     }
-    
+
     handleChange(e) {
         this.setState({
             message: e.target.value
         })
     }
-    
+
     handleSubmit(e) {
         e.preventDefault()
-        this.props.sendMessage(this.state.message)
+        this.props.sendMessage(window.localStorage.getItem("email"), window.localStorge.getItem("chatEmail"), this.state.message)
         this.setState({
             message: ''
         })
     }
-    
+
     render() {
         return (
             <form
