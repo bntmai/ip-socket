@@ -1,3 +1,8 @@
+/**
+ * 
+ * @param {*} index 
+ * return all users information
+ */
 export const fetchUsers = () => {
     return (dispatch, getState) => {
         let headers = { "Content-Type": "application/json" };
@@ -7,7 +12,8 @@ export const fetchUsers = () => {
             headers["Authorization"] = `Token ${token}`;
         }
 
-        return fetch("/api/users/", { headers, })
+
+        return fetch("http://127.0.0.1:5000/api/users/", { headers, method: "GET"})
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {
@@ -29,6 +35,11 @@ export const fetchUsers = () => {
     }
 }
 
+/**
+ * 
+ * @param {*} index 
+ * return current user infomation by id include their blogs in ascending order (front end will send a params id to backend)
+ */
 export const fetchUserInfoByUserId = index => {
     return (dispatch, getState) => {
         let headers = { "Content-Type": "application/json" };
@@ -38,7 +49,7 @@ export const fetchUserInfoByUserId = index => {
             headers["Authorization"] = `Token ${token}`;
         }
         let userId = getState().users[index].id;
-        return fetch(`/api/users/${userId}/`, { headers, })
+        return fetch(`http://127.0.0.1:5000/api/users/${userId}/`, { headers, method: "GET"})
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {

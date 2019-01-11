@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
+import {Redirect} from "react-router-dom";
 import {auth} from "../../../actions";
 import { connect } from 'react-redux';
 
@@ -10,6 +11,11 @@ class Login extends Component {
     this.props.login(this.state.username, this.state.password);
   }
   render() {
+    console.log(this.props.isAuthenticated)
+
+    if (this.props.isAuthenticated) {
+      return <Redirect to="/" />
+    }
     return (
       <div className="app flex-row align-items-center">
         <Container>

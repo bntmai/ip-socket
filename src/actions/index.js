@@ -1,3 +1,5 @@
 import * as auth from "./auth";
+import * as blogs from "./blogs";
+import * as users from "./users";
 
-export {auth}
+export {auth, blogs, users}

@@ -1,9 +1,9 @@
 /**
  * 
  * @param {*} index 
- * return all blogs in db
+ * return all blogs of current user in db
  */
-export const fetchBlog = () => {
+export const fetchBlogCurrentUser = () => {
     return (dispatch, getState) => {
         let headers = { "Content-Type": "application/json" };
         let { token } = getState().auth;
@@ -11,8 +11,8 @@ export const fetchBlog = () => {
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
-
-        return fetch("/api/blogs/", { headers, })
+        let body = JSON.stringify({ "access_token":  token });
+        return fetch("http://127.0.0.1:5000/api/blogs/", { headers, method: "GET", body })
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {
@@ -39,7 +39,7 @@ export const fetchBlog = () => {
  * @param {*} index 
  * insert new blog into database
  */
-export const addBlog = text => {
+export const addBlog = (title, content, userId) => {
     return (dispatch, getState) => {
         let headers = { "Content-Type": "application/json" };
         let { token } = getState().auth;
@@ -47,9 +47,8 @@ export const addBlog = text => {
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
-
-        let body = JSON.stringify({ text, });
-        return fetch("/api/blogs/", { headers, method: "POST", body })
+        let body = JSON.stringify({ "title": title, "content": content, "userId":  userId });
+        return fetch("http://127.0.0.1:5000/api/add-blogs/", { headers, method: "POST", body })
             .then(res => {
                 if (res.status < 500) {
                     return res.json().then(data => {
