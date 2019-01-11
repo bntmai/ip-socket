@@ -82,9 +82,7 @@ def login():
     result = ""
     cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
     rv = cur.fetchone()
-    print rv
     if rv[2] == password:
-        print "hello"
         access_token = create_access_token(identity = {'email': rv[1]})
         id = rv[0]
         email = rv[1]
@@ -109,7 +107,6 @@ def login():
 
 @app.route('/api/auth/user/', methods=['POST'])
 def user_auth():
-    print request.get_json()
     return None
 
 
@@ -274,6 +271,23 @@ def add_friends():
     conn.close()
     return jsonify({'result': result}),201
 
+@app.route('/api/find-friends/', methods=['POST'])
+def find_friends():
+  conn = sqlite3.connect('database.db')
+  cur = conn.cursor()
+  result = []
+  search_string = request.get_json()['searchString']
+
+  cur.execute("SELECT * FROM user where email LIKE '%" + search_string +"%'" )
+  rv = cur.fetchall()
+  for row in rv:
+    result.append({
+            'id': rv[0],
+            'email' : rv[1],
+            'dob' : rv[3],
+    })
+  conn.close()
+  return jsonify({'result': result}), 201
 
 if __name__ == '__main__':
     app.run(debug=True)
