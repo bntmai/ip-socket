@@ -51,6 +51,14 @@ export const loadUser = () => {
  */
 export const login = (username, password) => {
     return (dispatch, getState) => {
+
+        let headers = {            
+            "Content-Type": "application/json", 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        };
+
         let headers = { "Content-Type": "application/json" };
         const token = getState().auth.token;
 
@@ -92,12 +100,20 @@ export const login = (username, password) => {
  */
 export const register = (username, password, dob) => {
     return (dispatch, getState) => {
+        let headers = {             
+            "Content-Type": "application/json", 
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        };
+
         let headers = { "Content-Type": "application/json" };
         const token = getState().auth.token;
 
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
+
         let body = JSON.stringify({ username, password, dob });
 
         return fetch("/api/auth/register/", { headers, body, method: "POST" })
