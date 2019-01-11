@@ -64,7 +64,7 @@ class RootContainerComponent extends Component {
             <Route exact path="/register" name="Register Page" component={Register} />
             <Route exact path="/404" name="Page 404" component={Page404} />
             <Route exact path="/500" name="Page 500" component={Page500} />
-            <PrivateRoute exact path="/home" component={Dashboard} />
+            <PrivateRoute path="/home" component={Dashboard} />
           </Switch>
       </BrowserRouter>
     );
