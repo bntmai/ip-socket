@@ -6,9 +6,6 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 import os
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
-
-from flask_socketio import SocketIO
-
 from werkzeug.utils import secure_filename
 
 import logging
@@ -18,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('HELLO WORLD')
 
 UPLOAD_FOLDER = './public/assets/'
-
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
 
@@ -86,7 +83,7 @@ def login():
     result = ""
     cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
     rv = cur.fetchone()
-
+    print(rv)
     if rv[2] == password:
         access_token = create_access_token(identity = {'email': rv[1]})
         id = rv[0]
