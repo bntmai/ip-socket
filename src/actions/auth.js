@@ -57,7 +57,6 @@ export const login = (username, password) => {
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
-
         let body = JSON.stringify({ username, password });
 
         return fetch("/api/auth/login/", { headers, body, method: "POST" })
@@ -92,12 +91,14 @@ export const login = (username, password) => {
  */
 export const register = (username, password, dob) => {
     return (dispatch, getState) => {
+
         let headers = { "Content-Type": "application/json" };
         const token = getState().auth.token;
 
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
+
         let body = JSON.stringify({ username, password, dob });
 
         return fetch("/api/auth/register/", { headers, body, method: "POST" })

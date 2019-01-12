@@ -113,12 +113,14 @@ class Users extends Component {
     // const userList = usersData.filter((user) => user.id < 10)
     // var data = JSON.parse(this.state.data.result);
     const userList = []
+
     const data = this.state.data.result;
     for (var item in data) {
-      console.log(item);
+      console.log(data[item]);
       userList.push(data[item]);
     }
-    console.log(userList);
+    localStorage.setItem("userList", JSON.stringify(userList));
+    console.log(localStorage.getItem("userList"))
     return (
       <div className="animated fadeIn">
         <Row>

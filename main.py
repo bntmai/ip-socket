@@ -15,6 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('HELLO WORLD')
 
 UPLOAD_FOLDER = './public/assets/'
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
 
@@ -28,7 +29,7 @@ app.config['JWT_SECRET_KEY'] = 'secret'
 # mysql = MySQL(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
-
+socketio = SocketIO(app)
 CORS(app)
 #Uncomment when have db
 @app.route('/api/auth/register/', methods=['POST'])
@@ -63,7 +64,7 @@ def register():
 	# 	'avatar' : avatar
 	#   }
     # conn.close()
-    access_token = create_access_token(identity = {'email': email}).decode('ascii')
+    access_token = create_access_token(identity = {'email': email})
     result = {
         'id': id,
         'email' : email,
@@ -82,6 +83,7 @@ def login():
     result = ""
     cur.execute("SELECT * FROM user where email = '" + str(email) + "'")
     rv = cur.fetchone()
+    print(rv)
     if rv[2] == password:
         access_token = create_access_token(identity = {'email': rv[1]})
         id = rv[0]
@@ -294,5 +296,51 @@ def find_friends():
   conn.close()
   return jsonify({'result': result}), 201
 
+@app.route('/api/chat/sendMessages', methods=['POST'])
+def send_message():
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    print(request.get_json())
+    fromUserId = request.get_json()['fromUserId']
+    toUserId = request.get_json()['toUserId']
+    content = request.get_json()['content']
+    conn = sqlite3.connect('database.db')
+    cur.execute("INSERT INTO conversation (fromUserId, toUserId, content, createdTime) VALUES ('" +
+                str(fromUserId) + "', '" +
+                str(toUserId) + "', '" +
+                str(content) + "', '" +
+                str(datetime.now()) + "')")
+    conn.commit()
+    result = {
+            'fromUserId': fromUserId,
+            'toUserId' : toUserId,
+            'content' : content,
+        }
+    conn.close()
+    return jsonify({}),201
+
+@app.route('/api/chat/loadMessages/', methods=['POST'])
+def load_message():
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    fromUserId = request.get_json()['fromUserId']
+    toUserId = request.get_json()['toUserId']
+    content = request.get_json()['content']
+
+    cur.execute("SELECT * FROM conversation where (fromUserId = '" + str(fromUserId) + "' and toUserId = '" + str(toUserId) +
+    "') or (fromUserId = '" + str(toUserId) + "' and toUserId = '" + str(fromUserId) + "'")
+    rv = cur.fetchall()
+    result = []
+    for mess in rv:
+        result.push({
+            'fromUserId': mess[1],
+            'toUserId' : mess[2],
+            'content' : mess[3],
+        })
+    conn.close()
+    return jsonify({'result' : result}),201
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+    socketio.run(app,debug=True)
