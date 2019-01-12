@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Card, CardBody, CardHeader, Col, Row, FormGroup, Input, Label } from 'reactstrap';
 import ImageUploader from 'react-images-upload';
-import axios from 'axios'
 
 class Profile extends Component {
     constructor(props) {

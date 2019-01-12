@@ -59,7 +59,6 @@ export const login = (username, password) => {
             "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
         };
 
-        let headers = { "Content-Type": "application/json" };
         const token = getState().auth.token;
 
         if (token) {
@@ -107,7 +106,6 @@ export const register = (username, password, dob) => {
             "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
         };
 
-        let headers = { "Content-Type": "application/json" };
         const token = getState().auth.token;
 
         if (token) {

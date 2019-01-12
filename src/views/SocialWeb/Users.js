@@ -113,13 +113,15 @@ class Users extends Component {
   render() {
     // const userList = usersData.filter((user) => user.id < 10)
     // var data = JSON.parse(this.state.data.result);
-    const userList = []
+    let userList = []
 
     const data = this.state.data.result;
     for (var item in data) {
       console.log(data[item]);
       userList.push(data[item]);
     }
+    userList.splice(userList.findIndex(v => v.email === localStorage.getItem("email")), 1);
+    console.log(userList)
     localStorage.setItem("userList", JSON.stringify(userList));
     console.log(localStorage.getItem("userList"))
     return (

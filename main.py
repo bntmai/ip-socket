@@ -295,14 +295,13 @@ def find_friends():
             'dob' : row[3],
             'relation': is_friend
     })
-    print row
   conn.close()
   return jsonify({'result': result}), 201
 
 
 @app.route('/api/chat/sendMessages', methods=['POST'])
 def send_message():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('database.db', isolation_level=None)
     cur = conn.cursor()
     print(request.get_json())
     fromUserId = request.get_json()['fromUserId']
@@ -321,21 +320,20 @@ def send_message():
             'content' : content,
         }
     conn.close()
-    print(result)
-    print("hfksjfhlkasjflasj")
+
     return jsonify({}), 201
 
 
-@app.route('/api/chat/loadMessages/', methods=['POST'])
+@app.route('/api/chat/loadMessages', methods=['POST'])
 def load_message():
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
     fromUserId = request.get_json()['fromUserId']
     toUserId = request.get_json()['toUserId']
-    print(fromUserId)
-    cur.execute("SELECT * FROM conversation where (fromUserId = '" + str(fromUserId) + "' and toUserId = '" + str(toUserId) +
-    "') or (fromUserId = '" + str(toUserId) + "' and toUserId = '" + str(fromUserId) + "' ORDER BY createdTime ASC")
+    cur.execute("SELECT * FROM conversation where (fromUserId = " + str(fromUserId) + " and toUserId = " + str(toUserId) +
+    ") or (fromUserId = " + str(toUserId) + " and toUserId = " + str(fromUserId) + ") ORDER BY createdTime ASC")
     rv = cur.fetchall()
+
     result = []
     for mess in rv:
         result.append({
@@ -343,7 +341,7 @@ def load_message():
             'toUserId': mess[2],
             'content': mess[3],
         })
-        print(result)
+
     conn.close()
     return jsonify({'result': result}), 200
 
