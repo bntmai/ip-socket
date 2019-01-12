@@ -49,7 +49,7 @@ class Forms extends Component {
 
   onEditorStateChange: Function = (editorState) => {
     const contentState = editorState.getCurrentContent();
-    const id = localStorage.getItem("id");
+    const id = sessionStorage.getItem("id");
     this.setState({
       editorState,
       content: stateToHTML(contentState),

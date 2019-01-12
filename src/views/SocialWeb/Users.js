@@ -8,12 +8,12 @@ import { connect } from "react-redux";
 
 function onSubmitFriendRequest(user) {
   let headers = { "Content-Type": "application/json" };
-  let { token } = localStorage.getItem("access_token");
+  let { token } = sessionStorage.getItem("access_token");
 
   if (token) {
     headers["Authorization"] = `Token ${token}`;
   }
-  let userId = localStorage.getItem("id");
+  let userId = sessionStorage.getItem("id");
   let body = JSON.stringify({ "userId": userId, "friendId": user.id });
   console.log(body);
   fetch('http://127.0.0.1:5000/api/add-friends/', { headers, method: "POST", body }).then(result => {
@@ -74,13 +74,13 @@ class Users extends Component {
   onSubmit = e => {
     e.preventDefault();
     let headers = { "Content-Type": "application/json" };
-    let { token } = localStorage.getItem("access_token");
+    let { token } = sessionStorage.getItem("access_token");
 
     if (token) {
       headers["Authorization"] = `Token ${token}`;
     }
     let searchString = this.state.searchString;
-    let body = JSON.stringify({ "userId": localStorage.getItem("id"), "searchString": searchString });
+    let body = JSON.stringify({ "userId": sessionStorage.getItem("id"), "searchString": searchString });
     fetch('http://127.0.0.1:5000/api/find-friends/', { headers, method: "POST", body }).then(result => {
       return result.json();
     }).then(data => {
@@ -91,12 +91,12 @@ class Users extends Component {
   }
   getUserList() {
     let headers = { "Content-Type": "application/json" };
-    let { token } = localStorage.getItem("access_token");
+    let { token } = sessionStorage.getItem("access_token");
 
     if (token) {
       headers["Authorization"] = `Token ${token}`;
     }
-    let userId = localStorage.getItem("id");
+    let userId = sessionStorage.getItem("id");
     let body = JSON.stringify({ "userId": userId });
     fetch('http://127.0.0.1:5000/api/users/', { headers, method: "POST", body }).then(result => {
       return result.json();
@@ -120,10 +120,10 @@ class Users extends Component {
       console.log(data[item]);
       userList.push(data[item]);
     }
-    userList.splice(userList.findIndex(v => v.email === localStorage.getItem("email")), 1);
+    userList.splice(userList.findIndex(v => v.email === sessionStorage.getItem("email")), 1);
     console.log(userList)
-    localStorage.setItem("userList", JSON.stringify(userList));
-    console.log(localStorage.getItem("userList"))
+    sessionStorage.setItem("userList", JSON.stringify(userList));
+    console.log(sessionStorage.getItem("userList"))
     return (
       <div className="animated fadeIn">
         <Row>

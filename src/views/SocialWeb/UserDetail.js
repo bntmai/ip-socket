@@ -15,7 +15,7 @@ class User extends Component {
   }
   getUserList() {
     let headers = { "Content-Type": "application/json" };
-    let { token } = localStorage.getItem("access_token");
+    let { token } = sessionStorage.getItem("access_token");
 
     if (token) {
       headers["Authorization"] = `Token ${token}`;
@@ -39,12 +39,12 @@ class User extends Component {
   }
   getAvatar() {
     let headers = { "Content-Type": "application/json" };
-    let { token } = localStorage.getItem("access_token");
+    let { token } = sessionStorage.getItem("access_token");
 
     if (token) {
         headers["Authorization"] = `Token ${token}`;
     }
-    const userId = localStorage.getItem("id");
+    const userId = sessionStorage.getItem("id");
     let body = JSON.stringify({ "userId": userId });
     fetch('http://127.0.0.1:5000/api/get-images/', { headers, method: "POST", body }).then(result => {
         return result.json();

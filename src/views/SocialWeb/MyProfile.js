@@ -20,12 +20,12 @@ class Profile extends Component {
     }
     getBlogs() {
         let headers = { "Content-Type": "application/json" };
-        let { token } = localStorage.getItem("access_token");
+        let { token } = sessionStorage.getItem("access_token");
 
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
-        const userId = localStorage.getItem("id");
+        const userId = sessionStorage.getItem("id");
         let body = JSON.stringify({ "userId": userId });
         fetch('http://127.0.0.1:5000/api/blogs/', { headers, method: "POST", body }).then(result => {
             return result.json();
@@ -37,12 +37,12 @@ class Profile extends Component {
     }
     getAvatar() {
         let headers = { "Content-Type": "application/json" };
-        let { token } = localStorage.getItem("access_token");
+        let { token } = sessionStorage.getItem("access_token");
 
         if (token) {
             headers["Authorization"] = `Token ${token}`;
         }
-        const userId = localStorage.getItem("id");
+        const userId = sessionStorage.getItem("id");
         let body = JSON.stringify({ "userId": userId });
         fetch('http://127.0.0.1:5000/api/get-images/', { headers, method: "POST", body }).then(result => {
             return result.json();
@@ -55,14 +55,14 @@ class Profile extends Component {
     }
     handleUpload = () => {
         const file = this.state.pictures;
-        const name = localStorage.getItem("email") + "avatar";
+        const name = sessionStorage.getItem("email") + "avatar";
         const data = new FormData();
         data.append('file', file[0]);
         data.append('filename', name);
-        data.append('userId', localStorage.getItem("id"));
+        data.append('userId', sessionStorage.getItem("id"));
         console.log('file', data);
         let headers = { "Content-Type": "application/json" };
-        let { token } = localStorage.getItem("access_token");
+        let { token } = sessionStorage.getItem("access_token");
 
         if (token) {
             headers["Authorization"] = `Token ${token}`;
@@ -89,9 +89,9 @@ class Profile extends Component {
 
     render() {
 
-        const id = localStorage.getItem("id");
-        const email = localStorage.getItem("email");
-        const dob = localStorage.getItem("dob");
+        const id = sessionStorage.getItem("id");
+        const email = sessionStorage.getItem("email");
+        const dob = sessionStorage.getItem("dob");
         const blogList = [];
         const blogs = this.state.blogs["result"];
         for (var item in blogs) {
