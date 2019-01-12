@@ -97,3 +97,6 @@ html, body {
     justify-content: flex-start;
     align-items: 'center'
 }
+.list{
+    list-style: none
+}
